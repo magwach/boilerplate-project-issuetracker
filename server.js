@@ -1,26 +1,51 @@
 'use strict';
 
-const express     = require('express');
-const bodyParser  = require('body-parser');
-const expect      = require('chai').expect;
-const cors        = require('cors');
-require('dotenv').config();
-
-const apiRoutes         = require('./routes/api.js');
-const fccTestingRoutes  = require('./routes/fcctesting.js');
-const runner            = require('./test-runner');
+import express from 'express';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import dotenv from 'dotenv'; 
+dotenv.config();
+import mongoose from 'mongoose';
+import apiRoutes from './routes/api.js';
+import fccTestingRoutes from './routes/fcctesting.js';
+import emitter from './test-runner.js';
 
 let app = express();
 
 app.use('/public', express.static(process.cwd() + '/public'));
-
+app.use(bodyParser.json());
 app.use(cors({origin: '*'})); //For FCC testing purposes only
 
-
-
-app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+//MongoDB connection
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => console.log('Connected to MongoDB!'))
+    .catch(err => console.error('Connection error:', err));
+
+const librarySchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true,
+  },
+  text: {
+    type: String,
+    required: true,
+  },
+  created_by: String,
+  assigned_to: String,
+  status_text: String,
+  issue_title: String,
+  issue_text: String,
+  created_on: Date,
+  updated_on: Date,
+  open: {
+    type: Boolean,
+    default: true,
+  }
+});
+
+let Issue = mongoose.model('Issue', librarySchema);
 //Sample front-end
 app.route('/:project/')
   .get(function (req, res) {
@@ -33,11 +58,12 @@ app.route('/')
     res.sendFile(process.cwd() + '/views/index.html');
   });
 
+
 //For FCC testing purposes
 fccTestingRoutes(app);
 
 //Routing for API 
-apiRoutes(app);  
+apiRoutes(app, Issue);  
     
 //404 Not Found Middleware
 app.use(function(req, res, next) {
@@ -53,7 +79,7 @@ const listener = app.listen(process.env.PORT || 3000, function () {
     console.log('Running Tests...');
     setTimeout(function () {
       try {
-        runner.run();
+        emitter.run();
       } catch(e) {
         console.log('Tests are not valid:');
         console.error(e);
@@ -62,4 +88,4 @@ const listener = app.listen(process.env.PORT || 3000, function () {
   }
 });
 
-module.exports = app; //for testing
+export default app; //for testing

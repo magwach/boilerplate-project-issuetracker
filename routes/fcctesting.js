@@ -27,15 +27,15 @@
 
 'use strict';
 
-const cors = require('cors');
-const fs = require('fs');
-const runner = require('../test-runner');
+import cors from 'cors';
+import fs from 'fs';
+import runner from '../test-runner.js';
 
-module.exports = function (app) {
+export default function (app) {
 
   app.route('/_api/server.js')
     .get(function(req, res, next) {
-      console.log('requested');
+      console.log('requested1');
       fs.readFile(__dirname + '/server.js', function(err, data) {
         if(err) return next(err);
         res.send(data.toString());
@@ -43,7 +43,7 @@ module.exports = function (app) {
     });
   app.route('/_api/routes/api.js')
     .get(function(req, res, next) {
-      console.log('requested');
+      console.log('requested2');
       fs.readFile(__dirname + '/routes/api.js', function(err, data) {
         if(err) return next(err);
         res.type('txt').send(data.toString());
