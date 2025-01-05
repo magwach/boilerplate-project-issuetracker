@@ -1,3 +1,29 @@
-# Issue Tracker
+**Overview**
 
-This is the boilerplate for the Issue Tracker project. Instructions for building your project can be found at https://www.freecodecamp.org/learn/quality-assurance/quality-assurance-projects/issue-tracker
+An application for tracking issues in projects, complete with a bug-reporting and resolving system.
+
+**Features**
+
+    • Report and track project issues
+    • Assign issues to team members
+    • Filter by status, priority, and date
+
+**Setup Instructions**
+
+_Clone the repository:_
+
+    git clone https://github.com/magwach/boilerplate-project-issuetracker.git
+    
+_Install dependencies:_
+
+    npm install
+    
+_Run the server:_
+
+    npm start
+    
+**Technologies**
+
+    • Node.js
+    • Express
+    • MongoDB
